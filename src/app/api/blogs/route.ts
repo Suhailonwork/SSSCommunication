@@ -2,7 +2,7 @@ import { blogsDB } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 
 export async function GET() {
-  const blogs = blogsDB.getPublished();
+  const blogs = await blogsDB.getPublished();
   return Response.json(blogs);
 }
 
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const blog = blogsDB.create({
+  const blog = await blogsDB.create({
     title,
     slug,
     excerpt,

@@ -1,7 +1,9 @@
 import type { MetadataRoute } from "next";
 import { blogsDB, careersDB } from "@/lib/db";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sssdelhi.in";
   const now = new Date().toISOString();
 
@@ -15,14 +17,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
   ];
 
-  const blogRoutes: MetadataRoute.Sitemap = blogsDB.getPublished().map((blog) => ({
+  const blogs = await blogsDB.getPublished();
+  const careers = await careersDB.getPublished();
+
+  const blogRoutes: MetadataRoute.Sitemap = blogs.map((blog) => ({
     url: `${baseUrl}/blog/${blog.slug}`,
     lastModified: blog.updatedAt,
     changeFrequency: "monthly",
     priority: 0.7,
   }));
 
-  const careerRoutes: MetadataRoute.Sitemap = careersDB.getPublished().map((job) => ({
+  const careerRoutes: MetadataRoute.Sitemap = careers.map((job) => ({
     url: `${baseUrl}/careers/${job.id}`,
     lastModified: job.updatedAt,
     changeFrequency: "weekly",

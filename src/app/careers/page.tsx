@@ -18,8 +18,10 @@ const perks = [
   { icon: Briefcase, title: "Skill Development", desc: "Ongoing training programs and professional certifications." },
 ];
 
-export default function CareersPage() {
-  const jobs = careersDB.getPublished();
+export const dynamic = "force-dynamic";
+
+export default async function CareersPage() {
+  const jobs = await careersDB.getPublished();
 
   return (
     <>

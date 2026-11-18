@@ -5,8 +5,8 @@ import Link from "next/link";
 import { PlusCircle, Edit, Trash2, Eye, Briefcase } from "lucide-react";
 import AdminCareerActions from "./AdminCareerActions";
 
-export default function AdminCareersPage() {
-  const careers = careersDB.getAll().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+export default async function AdminCareersPage() {
+  const careers = (await careersDB.getAll()).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return (
     <div className="space-y-6 page-enter">

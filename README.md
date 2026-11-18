@@ -16,7 +16,17 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Configuration and data
+
+The app requires these server-side environment variables:
+
+- `ADMIN_USERNAME`
+- `ADMIN_PASSWORD`
+- `JWT_SECRET` (use a long, random value)
+
+Set them in `.env.local` for local development and in the Vercel Production and Preview environments. Do not prefix secrets with `NEXT_PUBLIC_`.
+
+Content is served from an in-memory store seeded from the JSON files in `src/data` (`blogs`, `careers`, `applications`, and `contacts`). Reads always work with no database to configure. Note that writes made through the admin UI are per-instance and not durable — on a serverless host they reset on cold start. To persist admin changes, edit the JSON files in `src/data` or reintroduce a database layer in `src/lib/db.ts`.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 

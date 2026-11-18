@@ -1,24 +1,44 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "sss-fallback-secret"
-);
 const COOKIE_NAME = "sss_admin_token";
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "SSSAdmin@2024";
+
+function getAuthConfig() {
+  const username = process.env.ADMIN_USERNAME;
+  const password = process.env.ADMIN_PASSWORD;
+  const jwtSecret = process.env.JWT_SECRET;
+
+  if (
+    process.env.NODE_ENV === "production" &&
+    (!username || !password || !jwtSecret)
+  ) {
+    throw new Error(
+      "ADMIN_USERNAME, ADMIN_PASSWORD, and JWT_SECRET must be configured in production."
+    );
+  }
+
+  return {
+    username: username || "admin",
+    password: password || "SSSAdmin@2024",
+    jwtSecret: new TextEncoder().encode(
+      jwtSecret || "development-only-jwt-secret"
+    ),
+  };
+}
 
 export async function signToken(payload: Record<string, string>) {
+  const { jwtSecret } = getAuthConfig();
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("7d")
-    .sign(JWT_SECRET);
+    .sign(jwtSecret);
 }
 
 export async function verifyToken(token: string) {
+  const { jwtSecret } = getAuthConfig();
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, jwtSecret);
     return payload;
   } catch {
     return null;
@@ -33,7 +53,8 @@ export async function getSession() {
 }
 
 export async function createSession(username: string, password: string) {
-  if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+  const config = getAuthConfig();
+  if (username !== config.username || password !== config.password) {
     return null;
   }
   const token = await signToken({ username, role: "admin" });
@@ -41,7 +62,8 @@ export async function createSession(username: string, password: string) {
 }
 
 export function isValidCredentials(username: string, password: string) {
-  return username === ADMIN_USERNAME && password === ADMIN_PASSWORD;
+  const config = getAuthConfig();
+  return username === config.username && password === config.password;
 }
 
 export { COOKIE_NAME };

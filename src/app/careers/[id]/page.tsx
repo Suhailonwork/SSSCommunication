@@ -11,9 +11,11 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const job = careersDB.getById(id);
+  const job = await careersDB.getById(id);
   if (!job) return { title: "Job Not Found" };
   return {
     title: `${job.title} | SSS Communications Careers`,
@@ -23,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function JobDetailPage({ params }: Props) {
   const { id } = await params;
-  const job = careersDB.getById(id);
+  const job = await careersDB.getById(id);
 
   if (!job || !job.published) notFound();
 

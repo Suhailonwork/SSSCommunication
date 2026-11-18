@@ -1,24 +1,9 @@
-import fs from "fs";
-import path from "path";
+import { randomUUID } from "node:crypto";
+import applicationSeed from "@/data/applications.json";
+import blogSeed from "@/data/blogs.json";
+import careerSeed from "@/data/careers.json";
+import contactSeed from "@/data/contacts.json";
 
-const dataDir = path.join(process.cwd(), "src", "data");
-
-function readJSON<T>(filename: string): T[] {
-  const filePath = path.join(dataDir, filename);
-  try {
-    const raw = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(raw) as T[];
-  } catch {
-    return [];
-  }
-}
-
-function writeJSON<T>(filename: string, data: T[]): void {
-  const filePath = path.join(dataDir, filename);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
-}
-
-// Blog types
 export interface Blog {
   id: string;
   title: string;
@@ -38,7 +23,6 @@ export interface Blog {
   seoDescription: string;
 }
 
-// Career types
 export interface Career {
   id: string;
   title: string;
@@ -57,7 +41,6 @@ export interface Career {
   updatedAt: string;
 }
 
-// Application types
 export interface Application {
   id: string;
   careerId: string;
@@ -73,7 +56,6 @@ export interface Application {
   updatedAt: string;
 }
 
-// Contact types
 export interface ContactMessage {
   id: string;
   name: string;
@@ -85,128 +67,153 @@ export interface ContactMessage {
   read: boolean;
 }
 
-// Blog CRUD
+// In-memory stores seeded from the JSON files in src/data.
+// Kept on globalThis so they survive dev Hot Module Reloading. Note: on a
+// serverless host (e.g. Vercel) writes are per-instance and reset on cold
+// start — reads always work, but created/updated records are not durable.
+const globalForStore = globalThis as typeof globalThis & {
+  __sssStore?: {
+    blogs: Blog[];
+    careers: Career[];
+    applications: Application[];
+    contacts: ContactMessage[];
+  };
+};
+
+const store =
+  globalForStore.__sssStore ??
+  (globalForStore.__sssStore = {
+    blogs: structuredClone(blogSeed as Blog[]),
+    careers: structuredClone(careerSeed as Career[]),
+    applications: structuredClone(applicationSeed as Application[]),
+    contacts: structuredClone(contactSeed as ContactMessage[]),
+  });
+
+const clone = <T>(value: T): T => structuredClone(value);
+
 export const blogsDB = {
-  getAll: () => readJSON<Blog>("blogs.json"),
-  getPublished: () => readJSON<Blog>("blogs.json").filter((b) => b.published),
-  getById: (id: string) => readJSON<Blog>("blogs.json").find((b) => b.id === id),
-  getBySlug: (slug: string) => readJSON<Blog>("blogs.json").find((b) => b.slug === slug),
-  create: (data: Omit<Blog, "id" | "createdAt" | "updatedAt">) => {
-    const all = readJSON<Blog>("blogs.json");
+  getAll: async () => clone(store.blogs),
+  getPublished: async () => clone(store.blogs.filter((b) => b.published)),
+  getById: async (id: string) => {
+    const blog = store.blogs.find((b) => b.id === id);
+    return blog ? clone(blog) : null;
+  },
+  getBySlug: async (slug: string) => {
+    const blog = store.blogs.find((b) => b.slug === slug);
+    return blog ? clone(blog) : null;
+  },
+  create: async (data: Omit<Blog, "id" | "createdAt" | "updatedAt">) => {
     const now = new Date().toISOString();
     const newBlog: Blog = {
       ...data,
-      id: Date.now().toString(),
+      id: randomUUID(),
       createdAt: now,
       updatedAt: now,
     };
-    writeJSON("blogs.json", [...all, newBlog]);
-    return newBlog;
+    store.blogs.push(newBlog);
+    return clone(newBlog);
   },
-  update: (id: string, data: Partial<Blog>) => {
-    const all = readJSON<Blog>("blogs.json");
-    const idx = all.findIndex((b) => b.id === id);
-    if (idx === -1) return null;
-    all[idx] = { ...all[idx], ...data, updatedAt: new Date().toISOString() };
-    writeJSON("blogs.json", all);
-    return all[idx];
+  update: async (id: string, data: Partial<Blog>) => {
+    const blog = store.blogs.find((b) => b.id === id);
+    if (!blog) return null;
+    Object.assign(blog, data, { id, updatedAt: new Date().toISOString() });
+    return clone(blog);
   },
-  delete: (id: string) => {
-    const all = readJSON<Blog>("blogs.json");
-    const filtered = all.filter((b) => b.id !== id);
-    writeJSON("blogs.json", filtered);
-    return filtered.length < all.length;
+  delete: async (id: string) => {
+    const index = store.blogs.findIndex((b) => b.id === id);
+    if (index === -1) return false;
+    store.blogs.splice(index, 1);
+    return true;
   },
 };
 
-// Career CRUD
 export const careersDB = {
-  getAll: () => readJSON<Career>("careers.json"),
-  getPublished: () => readJSON<Career>("careers.json").filter((c) => c.published),
-  getById: (id: string) => readJSON<Career>("careers.json").find((c) => c.id === id),
-  create: (data: Omit<Career, "id" | "createdAt" | "updatedAt">) => {
-    const all = readJSON<Career>("careers.json");
+  getAll: async () => clone(store.careers),
+  getPublished: async () => clone(store.careers.filter((c) => c.published)),
+  getById: async (id: string) => {
+    const career = store.careers.find((c) => c.id === id);
+    return career ? clone(career) : null;
+  },
+  create: async (data: Omit<Career, "id" | "createdAt" | "updatedAt">) => {
     const now = new Date().toISOString();
     const newCareer: Career = {
       ...data,
-      id: Date.now().toString(),
+      id: randomUUID(),
       createdAt: now,
       updatedAt: now,
     };
-    writeJSON("careers.json", [...all, newCareer]);
-    return newCareer;
+    store.careers.push(newCareer);
+    return clone(newCareer);
   },
-  update: (id: string, data: Partial<Career>) => {
-    const all = readJSON<Career>("careers.json");
-    const idx = all.findIndex((c) => c.id === id);
-    if (idx === -1) return null;
-    all[idx] = { ...all[idx], ...data, updatedAt: new Date().toISOString() };
-    writeJSON("careers.json", all);
-    return all[idx];
+  update: async (id: string, data: Partial<Career>) => {
+    const career = store.careers.find((c) => c.id === id);
+    if (!career) return null;
+    Object.assign(career, data, { id, updatedAt: new Date().toISOString() });
+    return clone(career);
   },
-  delete: (id: string) => {
-    const all = readJSON<Career>("careers.json");
-    const filtered = all.filter((c) => c.id !== id);
-    writeJSON("careers.json", filtered);
-    return filtered.length < all.length;
+  delete: async (id: string) => {
+    const index = store.careers.findIndex((c) => c.id === id);
+    if (index === -1) return false;
+    store.careers.splice(index, 1);
+    return true;
   },
 };
 
-// Applications CRUD
 export const applicationsDB = {
-  getAll: () => readJSON<Application>("applications.json"),
-  getById: (id: string) => readJSON<Application>("applications.json").find((a) => a.id === id),
-  getByCareer: (careerId: string) =>
-    readJSON<Application>("applications.json").filter((a) => a.careerId === careerId),
-  create: (data: Omit<Application, "id" | "createdAt" | "updatedAt" | "status">) => {
-    const all = readJSON<Application>("applications.json");
+  getAll: async () => clone(store.applications),
+  getById: async (id: string) => {
+    const application = store.applications.find((a) => a.id === id);
+    return application ? clone(application) : null;
+  },
+  getByCareer: async (careerId: string) =>
+    clone(store.applications.filter((a) => a.careerId === careerId)),
+  create: async (
+    data: Omit<Application, "id" | "createdAt" | "updatedAt" | "status">
+  ) => {
     const now = new Date().toISOString();
-    const newApp: Application = {
+    const newApplication: Application = {
       ...data,
-      id: Date.now().toString(),
+      id: randomUUID(),
       status: "pending",
       createdAt: now,
       updatedAt: now,
     };
-    writeJSON("applications.json", [...all, newApp]);
-    return newApp;
+    store.applications.push(newApplication);
+    return clone(newApplication);
   },
-  update: (id: string, data: Partial<Application>) => {
-    const all = readJSON<Application>("applications.json");
-    const idx = all.findIndex((a) => a.id === id);
-    if (idx === -1) return null;
-    all[idx] = { ...all[idx], ...data, updatedAt: new Date().toISOString() };
-    writeJSON("applications.json", all);
-    return all[idx];
+  update: async (id: string, data: Partial<Application>) => {
+    const application = store.applications.find((a) => a.id === id);
+    if (!application) return null;
+    Object.assign(application, data, {
+      id,
+      updatedAt: new Date().toISOString(),
+    });
+    return clone(application);
   },
-  delete: (id: string) => {
-    const all = readJSON<Application>("applications.json");
-    const filtered = all.filter((a) => a.id !== id);
-    writeJSON("applications.json", filtered);
-    return filtered.length < all.length;
+  delete: async (id: string) => {
+    const index = store.applications.findIndex((a) => a.id === id);
+    if (index === -1) return false;
+    store.applications.splice(index, 1);
+    return true;
   },
 };
 
-// Contact CRUD
 export const contactsDB = {
-  getAll: () => readJSON<ContactMessage>("contacts.json"),
-  create: (data: Omit<ContactMessage, "id" | "createdAt" | "read">) => {
-    const all = readJSON<ContactMessage>("contacts.json");
-    const newMsg: ContactMessage = {
+  getAll: async () => clone(store.contacts),
+  create: async (data: Omit<ContactMessage, "id" | "createdAt" | "read">) => {
+    const newMessage: ContactMessage = {
       ...data,
-      id: Date.now().toString(),
+      id: randomUUID(),
       createdAt: new Date().toISOString(),
       read: false,
     };
-    writeJSON("contacts.json", [...all, newMsg]);
-    return newMsg;
+    store.contacts.push(newMessage);
+    return clone(newMessage);
   },
-  markRead: (id: string) => {
-    const all = readJSON<ContactMessage>("contacts.json");
-    const idx = all.findIndex((c) => c.id === id);
-    if (idx === -1) return null;
-    all[idx].read = true;
-    writeJSON("contacts.json", all);
-    return all[idx];
+  markRead: async (id: string) => {
+    const message = store.contacts.find((c) => c.id === id);
+    if (!message) return null;
+    message.read = true;
+    return clone(message);
   },
 };

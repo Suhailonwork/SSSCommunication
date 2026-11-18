@@ -10,9 +10,11 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const blog = blogsDB.getBySlug(slug);
+  const blog = await blogsDB.getBySlug(slug);
   if (!blog) return { title: "Article Not Found" };
 
   return {
@@ -31,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const blog = blogsDB.getBySlug(slug);
+  const blog = await blogsDB.getBySlug(slug);
 
   if (!blog || !blog.published) notFound();
 
@@ -41,7 +43,7 @@ export default async function BlogPostPage({ params }: Props) {
     year: "numeric",
   });
 
-  const allBlogs = blogsDB.getPublished();
+  const allBlogs = await blogsDB.getPublished();
   const related = allBlogs.filter((b) => b.slug !== slug && b.category === blog.category).slice(0, 2);
 
   // Simple markdown to HTML

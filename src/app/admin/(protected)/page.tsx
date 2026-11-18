@@ -4,11 +4,13 @@ import { blogsDB, careersDB, applicationsDB, contactsDB } from "@/lib/db";
 import Link from "next/link";
 import { FileText, Briefcase, Users, MessageSquare, PlusCircle, TrendingUp, Eye } from "lucide-react";
 
-export default function AdminDashboard() {
-  const blogs = blogsDB.getAll();
-  const careers = careersDB.getAll();
-  const applications = applicationsDB.getAll();
-  const contacts = contactsDB.getAll();
+export default async function AdminDashboard() {
+  const [blogs, careers, applications, contacts] = await Promise.all([
+    blogsDB.getAll(),
+    careersDB.getAll(),
+    applicationsDB.getAll(),
+    contactsDB.getAll(),
+  ]);
 
   const pendingApps = applications.filter((a) => a.status === "pending").length;
   const unreadContacts = contacts.filter((c) => !c.read).length;

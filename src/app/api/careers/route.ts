@@ -2,7 +2,7 @@ import { careersDB } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 
 export async function GET() {
-  const careers = careersDB.getPublished();
+  const careers = await careersDB.getPublished();
   return Response.json(careers);
 }
 
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const career = careersDB.create({
+  const career = await careersDB.create({
     title,
     department,
     location: location || "New Delhi",

@@ -18,8 +18,10 @@ export const metadata: Metadata = {
     "SSS Communications — Delhi's premier BPO and web development company since 2014. Inbound & outbound call centers, web design, and integrated business solutions. 500+ satisfied clients.",
 };
 
-export default function HomePage() {
-  const featuredBlogs = blogsDB.getPublished().slice(0, 3);
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const featuredBlogs = (await blogsDB.getPublished()).slice(0, 3);
 
   return (
     <>

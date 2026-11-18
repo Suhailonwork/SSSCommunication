@@ -3,7 +3,7 @@ import { verifyToken } from "@/lib/auth";
 
 const COOKIE_NAME = "sss_admin_token";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Only protect /admin routes except /admin/login

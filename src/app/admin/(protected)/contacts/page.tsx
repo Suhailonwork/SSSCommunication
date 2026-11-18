@@ -3,8 +3,8 @@ export const dynamic = "force-dynamic";
 import { contactsDB } from "@/lib/db";
 import { MessageSquare, Mail, Phone } from "lucide-react";
 
-export default function AdminContactsPage() {
-  const contacts = contactsDB.getAll().sort(
+export default async function AdminContactsPage() {
+  const contacts = (await contactsDB.getAll()).sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 

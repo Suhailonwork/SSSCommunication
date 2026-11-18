@@ -5,8 +5,8 @@ import Link from "next/link";
 import { PlusCircle, Edit, Trash2, Eye, EyeOff, FileText } from "lucide-react";
 import AdminBlogActions from "./AdminBlogActions";
 
-export default function AdminBlogsPage() {
-  const blogs = blogsDB.getAll().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+export default async function AdminBlogsPage() {
+  const blogs = (await blogsDB.getAll()).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return (
     <div className="space-y-6 page-enter">

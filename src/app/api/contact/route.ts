@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid email" }, { status: 400 });
   }
 
-  const msg = contactsDB.create({
+  const msg = await contactsDB.create({
     name: name.trim(),
     email: email.trim().toLowerCase(),
     phone: phone?.trim() || "",

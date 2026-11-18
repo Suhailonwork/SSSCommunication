@@ -1,7 +1,11 @@
 import { applicationsDB } from "@/lib/db";
+import { getSession } from "@/lib/auth";
 
 export async function GET() {
-  const applications = applicationsDB.getAll();
+  const session = await getSession();
+  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+  const applications = await applicationsDB.getAll();
   return Response.json(applications);
 }
 
@@ -19,7 +23,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid email address" }, { status: 400 });
   }
 
-  const application = applicationsDB.create({
+  const application = await applicationsDB.create({
     careerId,
     careerTitle: careerTitle || "Unknown Position",
     name: name.trim(),

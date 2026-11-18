@@ -4,8 +4,8 @@ import { applicationsDB } from "@/lib/db";
 import ApplicationStatusUpdater from "./ApplicationStatusUpdater";
 import { Users } from "lucide-react";
 
-export default function AdminApplicationsPage() {
-  const applications = applicationsDB.getAll().sort(
+export default async function AdminApplicationsPage() {
+  const applications = (await applicationsDB.getAll()).sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
