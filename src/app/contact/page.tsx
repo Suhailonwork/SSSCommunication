@@ -1,9 +1,13 @@
-"use client";
-
-import { useState } from "react";
+import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle2 } from "lucide-react";
+import { Phone, Mail, MapPin, Clock } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Contact Us | SSS Communications Delhi",
+  description:
+    "Get in touch with SSS Communications. Call us directly or reach out by email for BPO and web development services in New Delhi.",
+};
 
 const contactInfo = [
   {
@@ -37,29 +41,6 @@ const contactInfo = [
 ];
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("loading");
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (res.ok) {
-        setStatus("success");
-        setForm({ name: "", email: "", phone: "", subject: "", message: "" });
-      } else {
-        setStatus("error");
-      }
-    } catch {
-      setStatus("error");
-    }
-  };
-
   return (
     <>
       <Navbar />
@@ -79,7 +60,7 @@ export default function ContactPage() {
               Let&apos;s Start a Conversation
             </h1>
             <p className="text-white/70 text-lg max-w-xl mx-auto">
-              Have a project in mind or want to learn more about our services? We&apos;d love to hear from you.
+              Have a project in mind or want to learn more about our services? Give us a call — we&apos;d love to hear from you.
             </p>
           </div>
         </section>
@@ -92,7 +73,7 @@ export default function ContactPage() {
               <div className="lg:col-span-2 space-y-5">
                 <div>
                   <h2 className="text-2xl font-bold text-primary mb-2">Contact Information</h2>
-                  <p className="text-slate-500 text-sm">Reach out through any of the channels below or fill in the form and we&apos;ll respond within 24 hours.</p>
+                  <p className="text-slate-500 text-sm">Reach out through any of the channels below and we&apos;ll be happy to help.</p>
                 </div>
 
                 {contactInfo.map((info) => (
@@ -112,122 +93,37 @@ export default function ContactPage() {
                     </div>
                   </div>
                 ))}
+              </div>
 
-                {/* Quick links */}
-                <div className="border-t border-slate-100 pt-6">
-                  <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-3">Quick Actions</p>
-                  <div className="space-y-2">
-                    <a href="tel:+919868480116" className="flex items-center gap-2 bg-primary text-white px-4 py-3 rounded-lg text-sm font-semibold hover:bg-primary-dark transition-colors">
-                      <Phone size={16} /> Call Us Now
-                    </a>
-                    <a href="mailto:info@sssdelhi.in" className="flex items-center gap-2 border border-primary text-primary px-4 py-3 rounded-lg text-sm font-semibold hover:bg-primary hover:text-white transition-colors">
-                      <Mail size={16} /> Send Email
+              {/* Call us directly */}
+              <div className="lg:col-span-3">
+                <div className="bg-primary rounded-2xl p-10 text-center text-white h-full flex flex-col items-center justify-center">
+                  <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center mb-6">
+                    <Phone size={36} className="text-gold" />
+                  </div>
+                  <h2 className="text-2xl font-bold mb-2">Call Us Directly</h2>
+                  <p className="text-white/70 mb-8 max-w-sm">
+                    Speak with our team right away — we&apos;re available Monday to Saturday, 9:00 AM to 7:00 PM.
+                  </p>
+                  <a
+                    href="tel:+919868480116"
+                    className="text-3xl md:text-4xl font-extrabold tracking-tight hover:text-gold transition-colors"
+                  >
+                    +91 98684 80116
+                  </a>
+                  <a
+                    href="tel:+919868480116"
+                    className="mt-8 inline-flex items-center gap-2 bg-gold text-primary px-8 py-4 rounded-xl font-bold hover:opacity-90 transition-opacity"
+                  >
+                    <Phone size={18} /> Call Now
+                  </a>
+                  <div className="mt-6 text-white/60 text-sm">
+                    Prefer email?{" "}
+                    <a href="mailto:info@sssdelhi.in" className="text-white font-semibold hover:text-gold transition-colors">
+                      info@sssdelhi.in
                     </a>
                   </div>
                 </div>
-              </div>
-
-              {/* Form */}
-              <div className="lg:col-span-3">
-                {status === "success" ? (
-                  <div className="flex flex-col items-center justify-center h-full py-16 text-center">
-                    <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mb-6">
-                      <CheckCircle2 size={40} className="text-green-600" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-primary mb-3">Message Sent!</h3>
-                    <p className="text-slate-500 mb-6">Thank you for reaching out. Our team will get back to you within 24 business hours.</p>
-                    <button onClick={() => setStatus("idle")} className="btn-outline">Send Another Message</button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="bg-surface rounded-2xl p-8 space-y-5">
-                    <div>
-                      <h2 className="text-xl font-bold text-primary mb-1">Send Us a Message</h2>
-                      <p className="text-slate-500 text-sm">We typically respond within 24 hours.</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Full Name *</label>
-                        <input
-                          required
-                          type="text"
-                          value={form.name}
-                          onChange={(e) => setForm({ ...form, name: e.target.value })}
-                          placeholder="Your full name"
-                          className="input-field"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Email Address *</label>
-                        <input
-                          required
-                          type="email"
-                          value={form.email}
-                          onChange={(e) => setForm({ ...form, email: e.target.value })}
-                          placeholder="your@email.com"
-                          className="input-field"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Phone Number</label>
-                        <input
-                          type="tel"
-                          value={form.phone}
-                          onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                          placeholder="+91 XXXXX XXXXX"
-                          className="input-field"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1.5">Subject *</label>
-                        <select
-                          required
-                          value={form.subject}
-                          onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                          className="input-field"
-                        >
-                          <option value="">Select a subject</option>
-                          <option>BPO Services Inquiry</option>
-                          <option>Web Development Project</option>
-                          <option>Partnership Opportunity</option>
-                          <option>Career / Job Inquiry</option>
-                          <option>General Inquiry</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-1.5">Message *</label>
-                      <textarea
-                        required
-                        rows={5}
-                        value={form.message}
-                        onChange={(e) => setForm({ ...form, message: e.target.value })}
-                        placeholder="Tell us about your project or inquiry..."
-                        className="input-field resize-none"
-                      />
-                    </div>
-
-                    {status === "error" && (
-                      <p className="text-red-600 text-sm bg-red-50 px-4 py-3 rounded-lg">Something went wrong. Please try again or call us directly.</p>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={status === "loading"}
-                      className="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-primary-dark transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-60"
-                    >
-                      {status === "loading" ? (
-                        <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Sending...</>
-                      ) : (
-                        <><Send size={18} /> Send Message</>
-                      )}
-                    </button>
-                  </form>
-                )}
               </div>
             </div>
           </div>

@@ -1,12 +1,12 @@
 [
   {
     "id": "1",
-    "title": "Customer Support Executive",
+    "title": "Caller Executive",
     "department": "BPO Operations",
     "location": "New Delhi (On-site)",
     "type": "Full-time",
     "experience": "0-2 years",
-    "salary": "₹15,000 – ₹22,000/month",
+    "salary": "₹10,000 – ₹15,000/month",
     "description": "We're looking for enthusiastic Customer Support Executives to join our growing BPO team. You'll be the first point of contact for our clients' customers, handling inquiries, resolving issues, and ensuring exceptional service.",
     "responsibilities": [
       "Handle inbound and outbound customer calls professionally",
@@ -36,87 +36,6 @@
     "deadline": "2024-12-31T23:59:59.000Z",
     "createdAt": "2024-11-01T09:00:00.000Z",
     "updatedAt": "2024-11-01T09:00:00.000Z"
-  },
-  {
-    "id": "2",
-    "title": "Senior Web Developer",
-    "department": "Technology",
-    "location": "New Delhi (Hybrid)",
-    "type": "Full-time",
-    "experience": "3-5 years",
-    "salary": "₹35,000 – ₹55,000/month",
-    "description": "Join our technology team as a Senior Web Developer to build responsive, high-performance websites and web applications for our diverse client portfolio. You'll lead development projects from design handoff to deployment.",
-    "responsibilities": [
-      "Develop responsive websites and web applications using modern technologies",
-      "Collaborate with designers to implement pixel-perfect UI",
-      "Optimize applications for speed, SEO, and performance",
-      "Mentor junior developers and conduct code reviews",
-      "Integrate third-party APIs and payment gateways",
-      "Maintain and upgrade existing client websites",
-      "Write clean, maintainable, and well-documented code"
-    ],
-    "requirements": [
-      "3-5 years of professional web development experience",
-      "Proficiency in React.js / Next.js",
-      "Strong knowledge of HTML5, CSS3, JavaScript/TypeScript",
-      "Experience with Node.js and REST APIs",
-      "Familiarity with version control (Git)",
-      "Understanding of SEO best practices",
-      "Experience with databases (MySQL, MongoDB)",
-      "Good communication and problem-solving skills"
-    ],
-    "benefits": [
-      "Competitive salary based on experience",
-      "Flexible working hours",
-      "Hybrid work model (3 days office, 2 days remote)",
-      "Professional development budget",
-      "Health insurance",
-      "Performance bonuses",
-      "Opportunity to work on diverse projects"
-    ],
-    "published": true,
-    "deadline": "2024-12-31T23:59:59.000Z",
-    "createdAt": "2024-11-01T09:00:00.000Z",
-    "updatedAt": "2024-11-01T09:00:00.000Z"
-  },
-  {
-    "id": "3",
-    "title": "Team Leader – BPO",
-    "department": "BPO Operations",
-    "location": "New Delhi (On-site)",
-    "type": "Full-time",
-    "experience": "2-4 years",
-    "salary": "₹25,000 – ₹35,000/month",
-    "description": "We're seeking an experienced Team Leader to manage and motivate a team of Customer Support Executives, ensuring service quality, meeting targets, and driving continuous improvement.",
-    "responsibilities": [
-      "Supervise and mentor a team of 15-20 Customer Support Executives",
-      "Monitor team performance metrics and ensure SLA adherence",
-      "Conduct daily team briefings and performance feedback sessions",
-      "Handle escalated customer complaints and complex cases",
-      "Prepare daily/weekly performance reports for management",
-      "Identify training needs and coordinate with the training team",
-      "Drive team engagement and maintain low attrition"
-    ],
-    "requirements": [
-      "2-4 years of BPO experience with at least 1 year in a supervisory role",
-      "Excellent leadership and people management skills",
-      "Strong analytical skills with ability to interpret metrics",
-      "Proficiency in MS Excel and reporting tools",
-      "Excellent Hindi and English communication",
-      "Ability to work under pressure and meet deadlines",
-      "Prior experience in financial services or auto industry BPO preferred"
-    ],
-    "benefits": [
-      "Attractive salary package",
-      "Performance-linked incentives",
-      "Leadership development programs",
-      "PF, ESI, and Gratuity",
-      "5 days working week",
-      "Fast-track career progression"
-    ],
-    "published": true,
-    "deadline": "2024-12-31T23:59:59.000Z",
-    "createdAt": "2024-11-05T09:00:00.000Z",
-    "updatedAt": "2024-11-05T09:00:00.000Z"
   }
+  
 ]
